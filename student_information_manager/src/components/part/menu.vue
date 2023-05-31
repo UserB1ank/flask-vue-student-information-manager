@@ -1,0 +1,135 @@
+<script setup>
+import {onMounted, ref} from 'vue'
+
+const activeIndex = ref('1')
+const activeIndex2 = ref('1')
+let show_login = ref(true)
+
+onMounted(function () {
+    let token = document.cookie;
+    if (token) {
+        show_login.value = false;
+    }
+})
+const handleSelect = (key, keyPath) => {
+    console.log(key, keyPath)
+}
+</script>
+<template>
+    <div class="header">
+        <el-menu
+                :default-active="activeIndex"
+                class="el-menu-demo Menu"
+                mode="horizontal"
+                @select="handleSelect"
+        >
+            <el-menu-item index="1">学生信息管理系统</el-menu-item>
+            <el-sub-menu index="2">
+                <template #title>编辑</template>
+                <el-menu-item index="2-1">添加</el-menu-item>
+                <el-menu-item index="2-2">删除</el-menu-item>
+                <el-menu-item index="2-3">修改</el-menu-item>
+<!--                <el-sub-menu index="2-4">-->
+<!--                    <template #title>item four</template>-->
+<!--                    <el-menu-item index="2-4-1">item one</el-menu-item>-->
+<!--                    <el-menu-item index="2-4-2">item two</el-menu-item>-->
+<!--                    <el-menu-item index="2-4-3">item three</el-menu-item>-->
+<!--                </el-sub-menu>-->
+            </el-sub-menu>
+            <el-menu-item index="3" disabled>Info</el-menu-item>
+        </el-menu>
+        <ul class="login" v-if="show_login">
+            <li>
+                <router-link to="/login">login</router-link>
+            </li>
+        </ul>
+        <ul class="user" v-if="!show_login">
+            <li>
+                <Avatar/>
+            </li>
+        </ul>
+    </div>
+    <div class="h-6"/>
+
+</template>
+
+<script>
+import Avatar from "./avatar.vue";
+
+export default {
+    name: "Menu",
+    components: {
+        Avatar,
+    }
+}
+</script>
+<style scoped>
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Menu {
+    width: 100%;
+}
+
+.user {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.user  {
+
+}
+
+.login {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.login ul {
+    display: flex;
+    align-items: center;
+}
+
+.login li {
+    display: flex;
+    float: left;
+    position: relative;
+    width: 150px;
+    height: 50px;
+    align-items: center;
+    border: 2px solid #409eff;
+}
+
+.login a {
+    color: #409eff;
+    position: relative;
+    font-size: 14px;
+    font-weight: 300;
+    width: 200px;
+    text-align:center;
+    /*left: 50px;*/
+    text-transform: uppercase;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.login li:hover a {
+    color: white;
+}
+
+.login li:hover {
+    border-radius: 12px;
+    background-color: #409eff;
+    -webkit-transition-duration: 1.5s;
+    transition-duration: 1.5s;
+    -webkit-box-shadow: 10px 10px 99px 6px #409eff;
+    -moz-box-shadow: 10px 10px 99px 6px #409eff;
+    box-shadow: 10px 10px 99px 6px #409eff;
+}
+
+
+</style>

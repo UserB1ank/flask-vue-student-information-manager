@@ -1,16 +1,16 @@
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import axios from "axios";
 
 import {reactive} from 'vue'
-
+onMounted(function(){}, undefined)
 
 
 </script>
 
 <template>
 <a>
-    我是控制台
+    我是注册
 </a>
 </template>
 

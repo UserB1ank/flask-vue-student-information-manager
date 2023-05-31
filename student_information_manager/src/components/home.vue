@@ -1,7 +1,6 @@
 <template>
     <Menu/>
     <div class="body">
-    <student_table/>
     </div>
 
 </template>

@@ -4,6 +4,7 @@ import axios from "axios";
 
 import {reactive} from 'vue'
 import {getToken, setToken} from "../auth.js";
+import router from "../route.js";
 
 
 const form = reactive({
@@ -17,13 +18,26 @@ const onSubmit = function () {
     params.append("username", form.username);
     params.append("password", form.password);
     axios.post("/api/login", params).then(res => {
-        document.cookie = "token=" + res.data.data["token"];
+        let token = "token=" + res.data.data["token"];
+        // alert(token);
+        if (token) {
+            setToken(token);
+            router.push('/manager')
+        } else {
+            alert("登录失败，错误的用户名或者密码");
+        }
 
-        console.log(res.data.data);
+
     }).catch(error => {
         console.log(error);
     })
 }
+
+const onRegister = () => {
+    router.push('/register');
+    return true
+}
+
 </script>
 <template>
     <div class="my_div">
@@ -48,7 +62,7 @@ const onSubmit = function () {
                 </el-col>
             </el-form-item>
             <el-form-item class="my_button">
-                <el-button>注册</el-button>
+                <el-button @click="onRegister">注册</el-button>
                 <el-button type="primary" @click="onSubmit">登录</el-button>
             </el-form-item>
         </el-form>
@@ -58,7 +72,7 @@ const onSubmit = function () {
 
 </script>
 
-<style>
+<style scoped>
 .my_div {
     position: fixed;
     left: 25%;
