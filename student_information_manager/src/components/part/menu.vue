@@ -1,12 +1,13 @@
 <script setup>
 import {onMounted, ref} from 'vue'
+import {getToken} from "../../auth.js";
 
 const activeIndex = ref('1')
 const activeIndex2 = ref('1')
 let show_login = ref(true)
 
 onMounted(function () {
-    let token = document.cookie;
+    let token = getToken();
     if (token) {
         show_login.value = false;
     }

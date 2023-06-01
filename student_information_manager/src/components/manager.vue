@@ -1,7 +1,7 @@
 <template>
     <Menu/>
     <div class="body">
-    <student_table/>
+        <student_table/>
     </div>
 
 </template>
@@ -11,7 +11,7 @@ import Menu from "./part/menu.vue";
 import Student_table from "./part/student_table.vue";
 
 export default {
-    name: "main",
+    name: "manager",
     components: {
         Student_table,
         Menu,

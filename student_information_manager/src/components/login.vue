@@ -3,7 +3,7 @@ import {ref} from 'vue'
 import axios from "axios";
 
 import {reactive} from 'vue'
-import {getToken, setToken} from "../auth.js";
+import {getToken, removeToken, setToken} from "../auth.js";
 import router from "../route.js";
 
 
@@ -12,13 +12,13 @@ const form = reactive({
     password: ''
 })
 
-
 const onSubmit = function () {
+    removeToken();
     const params = new URLSearchParams();
     params.append("username", form.username);
     params.append("password", form.password);
     axios.post("/api/login", params).then(res => {
-        let token = "token=" + res.data.data["token"];
+        let token = res.data.data["token"];
         // alert(token);
         if (token) {
             setToken(token);
@@ -26,8 +26,6 @@ const onSubmit = function () {
         } else {
             alert("登录失败，错误的用户名或者密码");
         }
-
-
     }).catch(error => {
         console.log(error);
     })

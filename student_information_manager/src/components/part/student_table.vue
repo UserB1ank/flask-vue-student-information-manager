@@ -1,14 +1,18 @@
 <script setup>
 import axios from "axios";
-import {onMounted} from "vue";
+import {onBeforeUpdate, onMounted, ref} from "vue";
 
-onMounted(()=>{
-    // axios.get()
+const tableData = ref();
+onMounted(() => {
+    axios.get("/api/manager").then(function (res) {
+        // let data = JSON.parse(res.data);
+        console.log(res.data);
+    })
 })
 </script>
 
 <template>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table style="width: 100%" v-model="tableData">
         <el-table-column prop="id" label="学号" width="180"/>
         <el-table-column prop="name" label="姓名" width="180"/>
         <el-table-column prop="gender" label="性别" width="180"/>

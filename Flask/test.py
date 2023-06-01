@@ -58,31 +58,6 @@ def verify_jwt(token, secret=None):
         return 2
     except jwt.InvalidTokenError:  # '非法的token'
         return 3
-
-
-# def login_required(f):
-#     '让装饰器装饰的函数属性不会变 -- name属性'
-#     '第1种方法,使用functools模块的wraps装饰内部函数'
-#
-#     @functools.wraps(f)
-#     def wrapper(*args, **kwargs):
-#         try:
-#             if g.username == 1:
-#                 return {'code': 4001, 'message': 'token已失效'}, 401
-#             elif g.username == 2:
-#                 return {'code': 4001, 'message': 'token认证失败'}, 401
-#             elif g.username == 2:
-#                 return {'code': 4001, 'message': '非法的token'}, 401
-#             else:
-#                 return f(*args, **kwargs)
-#         except BaseException as e:
-#             return {'code': 4001, 'message': '请先登录认证.'}, 401
-#
-#     '第2种方法,在返回内部函数之前,先修改wrapper的name属性'
-#     # wrapper.__name__ = f.__name__
-#     return wrapper
-
-
 @app.before_request
 def jwt_authentication():
     """

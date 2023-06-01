@@ -1,7 +1,8 @@
 import datetime
 import functools
+import json
 
-from flask import Flask, request, jsonify, current_app, g
+from flask import Flask, request, g
 from flask_cors import CORS
 from flask_sqlalchemy import *
 from sql_connect import *
@@ -17,22 +18,31 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
+# 用户对象
 class User(db.Model):
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True, unique=True)
-    username = db.Column(db.String(10), unique=True)
-    password = db.Column(db.String(20))
-    phone = db.Column(db.String(11))
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    username = db.Column(db.String(10), unique=True, nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    phone = db.Column(db.String(11), nullable=False)
 
     def __repr__(self):
         return "<User: %s, %s, %s, %s>" % (self.id, self.username, self.password, self.phone)
 
 
-# 测试是否连接成功
-# with app.app_context():
-#     with db.engine.connect() as conn:
-#         rs = conn.execute("select 1")
-#         print(rs.fetchone())  # (1,)
+# 学生信息对象
+class Student(db.Model):
+    __tablename__ = "student"
+    id = db.Column(db.String(10), primary_key=True, nullable=False)
+    name = db.Column(db.String(10), nullable=False)
+    gender = db.Column(db.String(4), nullable=False)
+    major = db.Column(db.String(30), nullable=False)
+    phone = db.Column(db.String(11), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    owner = db.relationship('User', backref=db.backref('posts', lazy='dynamic'))
+
+    def __repr__(self):
+        return "<User: %s, %s, %s, %s,%s>" % (self.id, self.name, self.gender, self.major, self.phone)
 
 
 # 跨域
@@ -40,8 +50,8 @@ CORS(app)
 
 # 构造header
 headers = {
-    'type': 'jwt',
-    'algo': 'hs256'
+    'typ': 'JWT',
+    'alg': 'HS256'
 }
 
 # 秘钥
@@ -73,7 +83,7 @@ def verify_jwt(token, secret=None):
     if not secret:
         secret = app.config['JWT_SECRET']
     try:
-        payload = jwt.decode(token, secret=secret, algorithms=['hs256'])
+        g.payload = jwt.decode(token, secret, algorithms=['HS256'])
         return 5
     except exceptions.ExpiredSignatureError:
         return 1
@@ -97,10 +107,13 @@ def jwt_authentication():
     """
     token = request.headers.get("Cookie")
     g.status = None
+    g.payload = None
     if not token:
         g.status = 0
         return
-    g.status = verify_jwt(token)
+    else:
+        token = token.replace('token=', '')
+        g.status = verify_jwt(token)
     return
 
 
@@ -126,11 +139,13 @@ def login_required(f):
             elif g.status == 2:
                 return {'code': 401, 'message': 'token认证失败'}
             elif g.status == 3:
-                return {'code': 401, 'message': '非法的token'}
+                return {'code': 401, 'message': 'Invalid_Token'}
+            elif g.status == 0:
+                return {'code': 401, 'message': '未登录'}
             else:
                 return f(*args, **kwargs)
         except BaseException as e:
-            return {'code': 401, 'message': '请先登录认证.'}
+            return {'code': 500, 'message': '服务端出错'}
 
     return wrapper
 
@@ -149,7 +164,6 @@ def login():
         return {"code": 501, "message": "登录失败"}
 
 
-@login_required
 @app.route('/register', methods=['POST'])
 def register():
     return "nihao"
@@ -159,7 +173,21 @@ def register():
 @app.route('/manager', methods=['GET'])
 @login_required
 def manager():
-    return "success"
+    userinfo = g.payload
+    # print(userinfo)
+    user = User.query.filter_by(username=userinfo['username']).first()
+    # print(user)
+    students = user.posts
+    stu_data = list()
+    stu = None
+    for student in students:
+        stu = {"id": student.id,
+               "name": student.name,
+               "gender": student.gender,
+               "major": student.major,
+               "phone": student.phone}
+        stu_data.append(stu)
+    return {"code": 200, "message": "登录成功", "data": stu_data}
 
 
 if __name__ == '__main__':
