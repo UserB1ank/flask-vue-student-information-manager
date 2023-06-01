@@ -13,7 +13,22 @@ onMounted(function () {
     }
 })
 const handleSelect = (key, keyPath) => {
-    console.log(key, keyPath)
+    if (key === "2-1") {
+        add();
+    } else if (key === "2-2") {
+        Delete();
+    } else if (key === "2-3") {
+        edit();
+    }
+}
+const add = () => {
+    console.log("增加");
+}
+const Delete = () => {
+    console.log(("删除"));
+}
+const edit = () => {
+    console.log(("修改"));
 }
 </script>
 <template>
@@ -27,15 +42,10 @@ const handleSelect = (key, keyPath) => {
             <el-menu-item index="1">学生信息管理系统</el-menu-item>
             <el-sub-menu index="2">
                 <template #title>编辑</template>
-                <el-menu-item index="2-1">添加</el-menu-item>
+                <el-menu-item index="2-1">添加
+                </el-menu-item>
                 <el-menu-item index="2-2">删除</el-menu-item>
                 <el-menu-item index="2-3">修改</el-menu-item>
-<!--                <el-sub-menu index="2-4">-->
-<!--                    <template #title>item four</template>-->
-<!--                    <el-menu-item index="2-4-1">item one</el-menu-item>-->
-<!--                    <el-menu-item index="2-4-2">item two</el-menu-item>-->
-<!--                    <el-menu-item index="2-4-3">item three</el-menu-item>-->
-<!--                </el-sub-menu>-->
             </el-sub-menu>
             <el-menu-item index="3" disabled>Info</el-menu-item>
         </el-menu>
@@ -56,11 +66,16 @@ const handleSelect = (key, keyPath) => {
 
 <script>
 import Avatar from "./avatar.vue";
-
+import Delete from "./dialog/delete.vue";
+import Edit from "./dialog/edit.vue";
+import Add from "./dialog/add.vue";
 export default {
     name: "Menu",
     components: {
         Avatar,
+        Add,
+        Delete,
+        Edit,
     }
 }
 </script>
@@ -80,7 +95,7 @@ export default {
     list-style-type: none;
 }
 
-.user  {
+.user {
 
 }
 
@@ -111,7 +126,7 @@ export default {
     font-size: 14px;
     font-weight: 300;
     width: 200px;
-    text-align:center;
+    text-align: center;
     /*left: 50px;*/
     text-transform: uppercase;
     background-color: transparent;
