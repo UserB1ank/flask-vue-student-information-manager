@@ -1,5 +1,5 @@
 <template>
-    <Menu/>
+    <home_nav/>
     <div class="body">
     </div>
 
@@ -8,12 +8,13 @@
 <script>
 import Menu from "./part/menu.vue";
 import Student_table from "./part/student_table.vue";
+import home_nav from "./part/home_nav.vue";
 
 export default {
     name: "Home",
     components: {
         Student_table,
-        Menu,
+        home_nav,
     }
 }
 </script>

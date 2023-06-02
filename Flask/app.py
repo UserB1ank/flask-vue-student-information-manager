@@ -223,8 +223,13 @@ def delete():
 
 @app.route('/register', methods=['POST'])
 def register():
-    return "nihao"
-    pass
+    username = request.form.get('username')
+    password = request.form.get('password')
+    phone = request.form.get('phone')
+    user = User(username=username, password=password, phone=phone)
+    db.session.add(user)
+    db.session.commit()
+    return {"code": 200, "message": "注册成功"}
 
 
 @app.route('/manager', methods=['GET'])

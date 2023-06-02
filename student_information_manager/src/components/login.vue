@@ -38,7 +38,9 @@ const onRegister = () => {
 
 </script>
 <template>
+    <home_nav/>
     <div class="my_div">
+        <h1>登录</h1>
         <el-form :model="form" class="my_form">
             <el-form-item label="账号">
                 <el-col>
@@ -67,7 +69,13 @@ const onRegister = () => {
     </div>
 </template>
 <script>
+ import home_nav from "./part/home_nav.vue";
 
+ export default {
+     components:{
+         home_nav
+     }
+ }
 </script>
 
 <style scoped>
@@ -94,5 +102,11 @@ const onRegister = () => {
     top: 20px;
     left: 35%;
 }
-
+h1{
+    margin: 0;
+    padding: 0;
+    position: relative;
+    top: 60px;
+    left: 47%;
+}
 </style>

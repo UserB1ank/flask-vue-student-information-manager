@@ -6,6 +6,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Cookies from "js-cookie";
 import {getToken} from "./auth.js";
 import Manager from "./components/manager.vue";
+import about from "./components/about.vue";
 //定义路由
 const routes = [
     {
@@ -26,6 +27,10 @@ const routes = [
     {
         path: '/register',
         component: register
+    },
+    {
+        path:'/about',
+        component: about
     }
 
 ];
