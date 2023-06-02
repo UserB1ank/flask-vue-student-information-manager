@@ -5,8 +5,6 @@ import json
 from flask import Flask, request, g
 from flask_cors import CORS
 from flask_sqlalchemy import *
-
-import app
 from sql_connect import *
 import jwt
 from jwt import exceptions
@@ -172,7 +170,8 @@ def login():
 def query():
     student_id = request.form['ID']
     data = Student.query.filter_by(id=student_id).first()
-    return {'code': 200, 'message': '查询成功', data: data}
+    data_dict = {"ID": data.id, "name": data.name, "gender": data.gender, "major": data.major, "phone": data.phone}
+    return {'code': 200, 'message': '查询成功', "data": data_dict}
 
 
 @app.route('/add', methods=['POST'])
@@ -191,6 +190,35 @@ def add():
     db.session.add(student)
     db.session.commit()
     return {"code": 200, "message": "增加成功"}
+
+
+@app.route('/update', methods=['POST'])
+@login_required
+def update():
+    # print(request.form)
+    origin_id = request.form.get('backup_id')
+    student = Student.query.filter_by(id=origin_id).first()
+    print(student)
+    student.id = request.form.get('data_id')
+    student.name = request.form.get('data_name')
+    student.gender = request.form.get('data_gender')
+    student.major = request.form.get('data_major')
+    student.phone = request.form.get('data_phone')
+    print(student)
+    db.session.commit()
+    return {'code': 200, "message": "修改成功"}
+
+
+@app.route('/delete', methods=['POST'])
+@login_required
+def delete():
+    ID = request.form.get('ID')
+    name = request.form.get('name')
+    gender = request.form.get('gender')
+    data = Student.query.filter_by(id=ID, name=name, gender=gender).first()
+    db.session.delete(data)
+    db.session.commit()
+    return {'code': 200, 'message': '删除成功'}
 
 
 @app.route('/register', methods=['POST'])

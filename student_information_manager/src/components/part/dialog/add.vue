@@ -13,10 +13,11 @@
                 <el-input v-model="form.gender" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="专业" :label-width="formLabelWidth">
-                <el-select v-model="form.major" placeholder="请选择专业">
-                    <el-option label="软件工程" value="软件工程"/>
-                    <el-option label="计算机科学与技术" value="计算机科学与技术"/>
-                </el-select>
+<!--                <el-select v-model="form.major" placeholder="请选择专业">-->
+<!--                    <el-option label="软件工程" value="软件工程"/>-->
+<!--                    <el-option label="计算机科学与技术" value="计算机科学与技术"/>-->
+<!--                </el-select>-->
+                <el-input v-model="form.major" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="电话" :label-width="formLabelWidth">
                 <el-input v-model="form.phone" autocomplete="off"/>
@@ -37,6 +38,7 @@
 import {reactive, ref} from 'vue'
 import axios from "axios";
 import {ElMessage} from "element-plus";
+import router from "../../../route.js";
 
 //添加成功的消息提示
 const emits = defineEmits(['update:dialogFormVisible']);
@@ -58,11 +60,22 @@ const submit = function () {
     params.append('phone', form.phone)
     axios.post('/api/add', params).then(res => {
         if (res.data.code === 200) {
-            success();
             emits('update:dialogFormVisible', false);
+            ElMessage({
+                message: '添加成功',
+                type: 'success',
+            })
+            setTimeout(()=>{
+                router.go(0)
+            },800);
             clear();
+        } else {
+            ElMessage({
+                message: "添加失败",
+                type: 'error'
+            })
         }
-        console.log(res.data);
+        // console.log(res.data);
     })
 }
 const clear = function () {
@@ -72,12 +85,6 @@ const clear = function () {
     form.phone = '';
     form.gender = '';
     form.major = '';
-}
-const success = () => {
-    ElMessage({
-        message: '添加成功',
-        type: 'success',
-    })
 }
 </script>
 
@@ -97,7 +104,8 @@ export default {
     props: {
         dialogFormVisible: {
             type: Boolean,
-        }
+        },
+
     }
 }
 </script>

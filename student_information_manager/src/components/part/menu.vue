@@ -18,8 +18,6 @@ const handleSelect = (key, keyPath) => {
         // console.log(add_dialog.value);
     } else if (key === "2-2") {
         Del();
-    } else if (key === "2-3") {
-        edit();
     }
 }
 //增加
@@ -33,11 +31,7 @@ const Del = () => {
     del_dialog.value = true;
     console.log(("删除"));
 }
-const edit_dialog = ref(false);
-const edit = () => {
-    edit_dialog.value = true;
-    console.log(("修改"));
-}
+
 </script>
 <template>
     <div class="header">
@@ -52,10 +46,8 @@ const edit = () => {
                 <template #title>编辑</template>
                 <el-menu-item index="2-1">
                     添加
-
                 </el-menu-item>
-                <el-menu-item index="2-2">删除</el-menu-item>
-                <el-menu-item index="2-3">修改</el-menu-item>
+                <el-menu-item index="2-2">查询</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="3" disabled>Info</el-menu-item>
         </el-menu>
@@ -72,13 +64,12 @@ const edit = () => {
     </div>
     <div class="h-6"/>
     <Add v-model:dialog-form-visible="add_dialog"/>
-    <Delete v-model:dialog-form-visible="del_dialog"/>
-    <Edit v-model:dialog-form-visible="edit_dialog"/>
+    <Query v-model:dialog-form-visible="del_dialog"/>
 </template>
 
 <script>
 import Avatar from "./avatar.vue";
-import Delete from "./dialog/delete.vue";
+import Query from "./dialog/query.vue";
 import Edit from "./dialog/edit.vue";
 import Add from "./dialog/add.vue";
 
@@ -87,7 +78,7 @@ export default {
     components: {
         Avatar,
         Add,
-        Delete,
+        Query,
         Edit,
     }
 }
