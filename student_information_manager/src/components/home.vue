@@ -10,7 +10,7 @@ import Menu from "./part/menu.vue";
 import Student_table from "./part/student_table.vue";
 
 export default {
-    name: "main",
+    name: "Home",
     components: {
         Student_table,
         Menu,

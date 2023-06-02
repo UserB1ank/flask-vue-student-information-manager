@@ -3,31 +3,39 @@ import {onMounted, ref} from 'vue'
 import {getToken} from "../../auth.js";
 
 const activeIndex = ref('1')
-const activeIndex2 = ref('1')
 let show_login = ref(true)
-
+//判断当前用户是否已经登录
 onMounted(function () {
     let token = getToken();
     if (token) {
         show_login.value = false;
     }
 })
+//处理下拉框选择
 const handleSelect = (key, keyPath) => {
     if (key === "2-1") {
         add();
+        // console.log(add_dialog.value);
     } else if (key === "2-2") {
-        Delete();
+        Del();
     } else if (key === "2-3") {
         edit();
     }
 }
+//增加
+const add_dialog = ref(false);
 const add = () => {
+    add_dialog.value = true;
     console.log("增加");
 }
-const Delete = () => {
+const del_dialog = ref(false);
+const Del = () => {
+    del_dialog.value = true;
     console.log(("删除"));
 }
+const edit_dialog = ref(false);
 const edit = () => {
+    edit_dialog.value = true;
     console.log(("修改"));
 }
 </script>
@@ -42,7 +50,9 @@ const edit = () => {
             <el-menu-item index="1">学生信息管理系统</el-menu-item>
             <el-sub-menu index="2">
                 <template #title>编辑</template>
-                <el-menu-item index="2-1">添加
+                <el-menu-item index="2-1">
+                    添加
+
                 </el-menu-item>
                 <el-menu-item index="2-2">删除</el-menu-item>
                 <el-menu-item index="2-3">修改</el-menu-item>
@@ -61,7 +71,9 @@ const edit = () => {
         </ul>
     </div>
     <div class="h-6"/>
-
+    <Add v-model:dialog-form-visible="add_dialog"/>
+    <Delete v-model:dialog-form-visible="del_dialog"/>
+    <Edit v-model:dialog-form-visible="edit_dialog"/>
 </template>
 
 <script>
@@ -69,6 +81,7 @@ import Avatar from "./avatar.vue";
 import Delete from "./dialog/delete.vue";
 import Edit from "./dialog/edit.vue";
 import Add from "./dialog/add.vue";
+
 export default {
     name: "Menu",
     components: {

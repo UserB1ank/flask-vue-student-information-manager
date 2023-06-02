@@ -5,6 +5,8 @@ import json
 from flask import Flask, request, g
 from flask_cors import CORS
 from flask_sqlalchemy import *
+
+import app
 from sql_connect import *
 import jwt
 from jwt import exceptions
@@ -145,6 +147,7 @@ def login_required(f):
             else:
                 return f(*args, **kwargs)
         except BaseException as e:
+            print(e)
             return {'code': 500, 'message': '服务端出错'}
 
     return wrapper
@@ -162,6 +165,32 @@ def login():
         return {"code": 200, "message": "登录成功", "data": {"token": token}}
     else:
         return {"code": 501, "message": "登录失败"}
+
+
+@app.route('/query', methods=['POST'])
+@login_required
+def query():
+    student_id = request.form['ID']
+    data = Student.query.filter_by(id=student_id).first()
+    return {'code': 200, 'message': '查询成功', data: data}
+
+
+@app.route('/add', methods=['POST'])
+@login_required
+def add():
+    # 从token获取当前管理员的用户名，查询id，设置user_id
+    username = g.payload['username']
+    user_id = User.query.filter_by(username=username).first().id
+    # 设置其它字段
+    ID = request.form['id']
+    name = request.form['name']
+    gender = request.form['gender']
+    major = request.form['major']
+    phone = request.form['phone']
+    student = Student(id=ID, name=name, gender=gender, major=major, phone=phone, user_id=user_id)
+    db.session.add(student)
+    db.session.commit()
+    return {"code": 200, "message": "增加成功"}
 
 
 @app.route('/register', methods=['POST'])
