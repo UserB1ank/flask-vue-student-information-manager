@@ -1,12 +1,16 @@
+<script setup>
+import url from '../assets/2.png'
+
+</script>
 <template>
     <home_nav/>
     <div class="body">
+        <el-image class="img" :src="url" />
     </div>
 
 </template>
 
 <script>
-import Menu from "./part/menu.vue";
 import Student_table from "./part/student_table.vue";
 import home_nav from "./part/home_nav.vue";
 
@@ -15,7 +19,7 @@ export default {
     components: {
         Student_table,
         home_nav,
-    }
+    },
 }
 </script>
 
@@ -27,10 +31,7 @@ export default {
     height: auto;
 }
 
-.inside {
-    position: fixed;
-    left: 40%;
-}
+
 
 .inside a {
     margin-left: 80px;
@@ -42,5 +43,31 @@ export default {
     text-align: right;
     background-color: yellow;
 
+}
+
+.demonstration {
+    color: var(--el-text-color-secondary);
+}
+
+.el-carousel__item h3 {
+    color: #475669;
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 200px;
+    margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+}
+.img{
+    height: 700px;
+    position: relative;
+    left: 300px;
+    top:20px;
 }
 </style>
