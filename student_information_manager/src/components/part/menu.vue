@@ -49,7 +49,6 @@ const Del = () => {
                 </el-menu-item>
                 <el-menu-item index="2-2">查询</el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="3" disabled>Info</el-menu-item>
         </el-menu>
         <ul class="login" v-if="show_login">
             <li>

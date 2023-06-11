@@ -1,10 +1,12 @@
 import datetime
 import functools
 import json
+import os
 
 from flask import Flask, request, g
+
 from flask_cors import CORS
-from flask_sqlalchemy import *
+from model import db, User, Student
 from sql_connect import *
 import jwt
 from jwt import exceptions
@@ -14,35 +16,10 @@ app.config[
     'SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
 
 # 数据库
-db = SQLAlchemy()
+
 db.init_app(app)
 
-
 # 用户对象
-class User(db.Model):
-    __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
-    username = db.Column(db.String(10), unique=True, nullable=False)
-    password = db.Column(db.String(20), nullable=False)
-    phone = db.Column(db.String(11), nullable=False)
-
-    def __repr__(self):
-        return "<User: %s, %s, %s, %s>" % (self.id, self.username, self.password, self.phone)
-
-
-# 学生信息对象
-class Student(db.Model):
-    __tablename__ = "student"
-    id = db.Column(db.String(10), primary_key=True, nullable=False)
-    name = db.Column(db.String(10), nullable=False)
-    gender = db.Column(db.String(4), nullable=False)
-    major = db.Column(db.String(30), nullable=False)
-    phone = db.Column(db.String(11), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    owner = db.relationship('User', backref=db.backref('posts', lazy='dynamic'))
-
-    def __repr__(self):
-        return "<User: %s, %s, %s, %s,%s>" % (self.id, self.name, self.gender, self.major, self.phone)
 
 
 # 跨域
@@ -160,6 +137,7 @@ def login():
     users = User.query.filter_by(username=username, password=password).first()
     if users:
         token = create_token(username, ip)
+        print(token)
         return {"code": 200, "message": "登录成功", "data": {"token": token}}
     else:
         return {"code": 501, "message": "登录失败"}
@@ -195,16 +173,21 @@ def add():
 @app.route('/update', methods=['POST'])
 @login_required
 def update():
+    """
+    先获取原本的记录
+    然后再修改
+    :return: http_code message
+    """
     # print(request.form)
     origin_id = request.form.get('backup_id')
     student = Student.query.filter_by(id=origin_id).first()
-    print(student)
+    # print(student)
     student.id = request.form.get('data_id')
     student.name = request.form.get('data_name')
     student.gender = request.form.get('data_gender')
     student.major = request.form.get('data_major')
     student.phone = request.form.get('data_phone')
-    print(student)
+    # print(student)
     db.session.commit()
     return {'code': 200, "message": "修改成功"}
 
@@ -250,6 +233,74 @@ def manager():
                "phone": student.phone}
         stu_data.append(stu)
     return {"code": 200, "message": "登录成功", "data": stu_data}
+
+
+# 个人信息管理
+@app.route('/information', methods=['POST'])
+@login_required
+def information():
+    return {"code": 200, "message": "修改成功"}
+
+
+# 日程清单
+@app.route('/todo', methods=['POST', 'GET'])
+@login_required
+def todo():
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        pass
+    return {"code": 500, "message": "服务端出错"}
+
+
+# 头像
+@app.route('/avatar', methods=['POST', 'GET'])
+@login_required
+def avatar():
+    """
+    在数据库中保存头像路径，头像文件保存在前端
+    post请求时为保存头像
+    get请求时为返回头像路径
+    做了文件后缀名白名单处理
+    :return:
+    """
+    if request.method == 'POST':
+        username = g.payload['username']
+        user = User.query.filter_by(username=username).first()
+        file = request.files['file']
+        file_name = file.filename
+        """
+        文件后缀名白名单过滤
+        """
+        white_lst = ['.jpg', '.jpeg', '.png']
+        file_ext = os.path.splitext(file_name)[-1]
+        if file_ext.lower() in white_lst:
+            # 删除老头像
+            try:
+                old_avatar_path = user.avatar_path
+                if old_avatar_path is not None:
+                    os.remove(old_avatar_path)
+            except Exception as e:
+                print(e)
+            path = f'./static/avatar/{username}' + file_name
+            file.save(path)
+            user.avatar_path = path
+            db.session.commit()
+            # 返回头像地址
+            path = str(path).lstrip('.')
+            data = "http://127.0.0.1:5000" + path
+            return {"code": 200, "message": "头像保存成功", "data": data}
+        else:
+            return {"code": 415, "message": "文件类型非法"}
+    elif request.method == 'GET':
+        username = g.payload['username']
+        user = User.query.filter_by(username=username).first()
+        path = user.avatar_path
+        # ./static/avatar/123avatar.jpg
+        path = str(path).lstrip('.')
+        data = "http://127.0.0.1:5000" + path
+        return {"code": 200, "message": "请求成功", "data": data}
+    return {"code": 500, "message": "服务端出错"}
 
 
 if __name__ == '__main__':

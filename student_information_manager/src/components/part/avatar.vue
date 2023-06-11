@@ -3,6 +3,8 @@ import {ArrowDown} from '@element-plus/icons-vue'
 import {removeToken} from "../../auth.js";
 import {ElMessage} from "element-plus";
 import router from "../../route.js";
+import {onMounted, ref} from "vue";
+import axios from "axios";
 
 const logout = () => {
     // console.log("213")
@@ -15,6 +17,13 @@ const logout = () => {
         type: "success",
     })
 }
+
+const imageUrl = ref('');
+onMounted(function () {
+    axios.get('/api/avatar').then(function (res) {
+        imageUrl.value = res.data.data;
+    })
+})
 </script>
 <template>
     <div class="demo-type">
@@ -23,7 +32,7 @@ const logout = () => {
             <el-button type="primary" class="dropdown">
                 <div>
                     <el-avatar
-                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                            :src="imageUrl"
                     />
                 </div>
             </el-button>
@@ -31,6 +40,7 @@ const logout = () => {
                 <el-dropdown-menu>
                     <el-dropdown-item @click="router.push('/')">首页</el-dropdown-item>
                     <el-dropdown-item @click="router.push('/manager')">学生信息管理系统</el-dropdown-item>
+                    <el-dropdown-item @click="router.push('/information')">个人信息</el-dropdown-item>
                     <el-dropdown-item @click="logout">注销</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
@@ -40,7 +50,7 @@ const logout = () => {
 
 <script>
 export default {
-    name: "Avatar"
+    name: "Avatar",
 }
 </script>
 

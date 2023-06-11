@@ -1,12 +1,11 @@
 import login from "./components/login.vue";
 import register from "./components/register.vue";
 import Home from "./components/home.vue";
-import manager from './components/manager.vue';
 import {createRouter, createWebHistory} from 'vue-router'
-import Cookies from "js-cookie";
 import {getToken} from "./auth.js";
 import Manager from "./components/manager.vue";
 import about from "./components/about.vue";
+import information from "./components/information.vue";
 //定义路由
 const routes = [
     {
@@ -31,6 +30,13 @@ const routes = [
     {
         path:'/about',
         component: about
+    },
+    {
+        path: '/information',
+        component: information,
+        meta:{
+            requireAuth: true,
+        }
     }
 
 ];

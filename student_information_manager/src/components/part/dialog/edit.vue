@@ -48,7 +48,6 @@ const formLabelWidth = '140px'
 <script>
 import axios from "axios";
 import {ElMessage} from "element-plus";
-import backtop from "../backtop.vue";
 import router from "../../../route.js";
 import {ref} from "vue";
 const backup = ref({})
