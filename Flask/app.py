@@ -61,6 +61,8 @@ def verify_jwt(token, secret=None):
         secret = app.config['JWT_SECRET']
     try:
         g.payload = jwt.decode(token, secret, algorithms=['HS256'])
+        if g.payload['ip'] != request.remote_addr:  # 验证ip，防止cookie窃取
+            return 3
         return 5
     except exceptions.ExpiredSignatureError:
         return 1
@@ -137,7 +139,6 @@ def login():
     users = User.query.filter_by(username=username, password=password).first()
     if users:
         token = create_token(username, ip)
-        print(token)
         return {"code": 200, "message": "登录成功", "data": {"token": token}}
     else:
         return {"code": 501, "message": "登录失败"}
@@ -233,24 +234,6 @@ def manager():
                "phone": student.phone}
         stu_data.append(stu)
     return {"code": 200, "message": "登录成功", "data": stu_data}
-
-
-# 个人信息管理
-@app.route('/information', methods=['POST'])
-@login_required
-def information():
-    return {"code": 200, "message": "修改成功"}
-
-
-# 日程清单
-@app.route('/todo', methods=['POST', 'GET'])
-@login_required
-def todo():
-    if request.method == 'GET':
-        pass
-    elif request.method == 'POST':
-        pass
-    return {"code": 500, "message": "服务端出错"}
 
 
 # 头像
